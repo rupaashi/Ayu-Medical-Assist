@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AYU Health Assistant</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'blush-pink': '#F28695',
+                        'petal-peach': '#F2BFB4',
+                        'sand-gold': '#F1CCA6',
+                        'cream-yellow': '#F2E6B8',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        html { font-size: 16px; scroll-behavior: smooth; }
+        body { font-family: 'Nunito', sans-serif; }
+        #chat-container { scroll-behavior: smooth; }
+        .loader {
+            border: 4px solid #F2E6B8; /* cream-yellow */
+            border-top: 4px solid #F28695; /* blush-pink */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-b from-cream-yellow to-petal-peach text-zinc-700 flex flex-col h-screen">
+
+    <div class="container mx-auto max-w-2xl p-4 sm:p-6 flex-1 flex flex-col my-4 md:my-8 bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl relative">
+        
+        <div class="absolute top-4 right-6 flex space-x-2">
+            <button id="about-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold w-10 h-10 rounded-full text-lg shadow-sm transition-transform transform hover:scale-110" title="About AYU">
+                i
+            </button>
+            
+            <button id="mute-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 w-10 h-10 rounded-full shadow-sm transition-transform transform hover:scale-110 flex items-center justify-center" title="Mute/Unmute">
+                <svg id="mute-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5 9v6a2 2 0 002 2h2a2 2 0 002-2V9a2 2 0 00-2-2H7a2 2 0 00-2 2z"></path>
+                </svg>
+            </button>
+            
+            <button id="font-decrease" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold w-10 h-10 rounded-full text-lg shadow-sm transition-transform transform hover:scale-110" title="Decrease font size">-A</button>
+            <button id="font-increase" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold w-10 h-10 rounded-full text-lg shadow-sm transition-transform transform hover:scale-110" title="Increase font size">+A</button>
+        </div>
+
+        <div class="text-center mb-6 pt-8 sm:pt-0">
+            <h1 class="text-3xl font-bold text-blush-pink">Hi, I'm AYU</h1>
+            <p class="text-gray-500">I'm here to help with your health questions.</p>
+        </div>
+
+        <div class="mb-4">
+            <label for="lang-select" class="text-sm font-medium text-zinc-700 ml-2">Select Language:</label>
+            <select id="lang-select" class="w-full p-3 rounded-full bg-white text-zinc-800 border border-gray-200 focus:ring-2 focus:ring-blush-pink focus:border-blush-pink shadow-sm outline-none">
+                <option value="en-US">English</option>
+                <option value="hi-IN">Hindi (हिन्दी)</option>
+            </select>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-4">
+            <button id="report-btn" class="w-full bg-petal-peach hover:bg-opacity-80 text-zinc-800 font-bold py-3 px-4 rounded-full transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 text-xs sm:text-base">
+                Explain Report 📝
+            </button>
+            <button id="symptom-btn" class="w-full bg-sand-gold hover:bg-opacity-80 text-zinc-800 font-bold py-3 px-4 rounded-full transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 text-xs sm:text-base">
+                Assess Symptoms 🩺
+            </button>
+            <button id="speak-btn" class="w-full bg-blush-pink hover:bg-opacity-80 text-zinc-800 font-bold py-3 px-4 rounded-full transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 text-xs sm:text-base">
+                Speak 🎤
+            </button>
+        </div>
+        
+        <div id="chat-container" class="flex-1 overflow-y-auto bg-white rounded-2xl p-4 border border-gray-200 shadow-inner">
+            <div class="flex justify-start mb-3 animate-fadeIn">
+                <div class="bg-gray-100 text-zinc-800 rounded-lg py-2 px-4 max-w-xs shadow-sm" style="border-bottom-left-radius: 0;">
+                    Hello! I'm AYU. I can help you understand medical reports or book appointments. What's on your mind?
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 flex">
+            <input type="text" id="chat-input" class="flex-1 p-3 pl-5 rounded-l-full bg-white text-zinc-800 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blush-pink shadow-sm" placeholder="Or type your question here...">
+            
+            <button id="clear-btn" class="bg-gray-200 hover:bg-gray-300 text-zinc-600 font-bold p-3 border-y border-gray-200 shadow-sm" title="Clear Chat">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+            
+            <button id="send-btn" class="bg-blush-pink hover:bg-opacity-80 text-zinc-800 font-bold p-3 rounded-r-full shadow-sm">Send</button>
+        </div>
+
+    </div>
+    
+    <div id="about-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 relative animate-fadeIn">
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            
+            <h2 class="text-2xl font-bold text-blush-pink mb-4">About AYU</h2>
+            <p class="text-gray-600 mb-2">
+                <strong>AYU</strong> is an empathetic AI health assistant designed to make healthcare more accessible and less intimidating.
+            </p>
+            <p class="text-gray-600 mb-4">
+                You can ask AYU to:
+            </p>
+            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                <li>Explain complex medical reports in simple terms.</li>
+                <li>Assess your symptoms and suggest next steps.</li>
+                <li>Help you book a doctor's appointment.</li>
+            </ul>
+            <p class="text-sm text-gray-500 mt-6">
+                <strong>Disclaimer:</strong> AYU is an AI assistant and not a medical professional. Always consult with a qualified doctor for medical advice or a diagnosis.
+            </p>
+        </div>
+    </div>
+
+
+    <script>
+        // --- 1. GET ALL THE HTML ELEMENTS ---
+        const chatContainer = document.getElementById('chat-container');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const speakBtn = document.getElementById('speak-btn');
+        const reportBtn = document.getElementById('report-btn');
+        const langSelect = document.getElementById('lang-select');
+        const symptomBtn = document.getElementById('symptom-btn');
+        const fontIncreaseBtn = document.getElementById('font-increase');
+        const fontDecreaseBtn = document.getElementById('font-decrease');
+        const clearBtn = document.getElementById('clear-btn');
+        const aboutBtn = document.getElementById('about-btn');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const aboutModal = document.getElementById('about-modal');
+        const muteBtn = document.getElementById('mute-btn');
+        const muteIcon = document.getElementById('mute-icon');
+
+        let isMuted = false;
+        
+        const speakerOnIcon = <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5 9v6a2 2 0 002 2h2a2 2 0 002-2V9a2 2 0 00-2-2H7a2 2 0 00-2 2z"></path>;
+        const speakerOffIcon = <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .89-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l-4-4m0 4l4-4"></path>;
+        
+        if (muteIcon) {
+            muteIcon.innerHTML = speakerOnIcon; // Default state
+        }
+
+
+        // --- 2. YOUR HACKATHON API KEY ---
+        // !!! --- KEY IS REMOVED --- !!!
+        // Your friend's backend is handling this, so we leave this section empty.
+        
+        
+        // --- 3. SYSTEM PROMPT (The "Bot" personality) ---
+        // This is the "bot-like" prompt we discussed.
+        const SYSTEM_PROMPT = `
+You are AYU, an efficient, factual, and concise AI health assistant.
+Your goal is to provide clear, logical, and step-by-step solutions.
+
+*CORE PERSONALITY RULES:*
+- Be direct and to the point.
+- Do not use empathetic, emotional, or "fluffy" language.
+- Provide information as a numbered list or clear, actionable steps.
+- If you do not know an answer, state "I do not have that information."
+
+*YOUR JOBS:*
+- JOB 1 (REPORT): Summarize the key findings of a medical report.
+- JOB 2 (APPOINTMENT): Get the date and time for an appointment and generate a Google Calendar link: [Click to Add to Calendar](https://www.google.com/calendar/render?action=TEMPLATE&text=Doctor+Appointment&dates=YYYYMMDDTHHMMSSZ/YYYYMMDDTHHMMSSZ).
+- JOB 3 (TRIAGE): Ask a series of 3-4 logical questions to determine a user's health situation, then provide a recommendation.
+- SAFETY: You are not a doctor. You cannot give a diagnosis. If asked, state: "I cannot provide a medical diagnosis. Please consult a doctor."
+`;
+        
+        const SAMPLE_REPORT = `
+PATIENT: John Doe
+TEST: Complete Blood Count (CBC)
+RESULTS:
+- WBC: 11.5 (High) - Normal: 4.5-11.0
+- HGB: 15.0 (Normal) - Normal: 14.0-18.0
+- PLT: 250 (Normal) - Normal: 150-450
+NOTES: Leukocytosis observed.
+`;
+
+        const WELCOME_MESSAGE = "Hello! I'm AYU. I can help you understand medical reports or book appointments. What's on your mind?";
+
+        let chatHistory = [
+            { role: "system", content: SYSTEM_PROMPT },
+        ];
+
+        // --- 4. HELPER FUNCTIONS ---
+        function addMessage(role, content) {
+            try {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('flex', 'mb-3', 'animate-fadeIn');
+
+                const bubble = document.createElement('div');
+                bubble.classList.add('py-2', 'px-4', 'rounded-lg', 'max-w-xs', 'shadow-sm', 'text-base');
+
+                if (role === 'user') {
+                    messageDiv.classList.add('justify-end');
+                    bubble.classList.add('bg-blush-pink', 'text-zinc-800');
+                    bubble.style.borderBottomRightRadius = '0';
+                } else {
+                    messageDiv.classList.add('justify-start');
+                    bubble.classList.add('bg-gray-100', 'text-zinc-800');
+                    bubble.style.borderBottomLeftRadius = '0';
+                }
+                
+                if (content === "thinking...") {
+                    bubble.innerHTML = '<div class="loader"></div>';
+                } else {
+                    content = content.replace(/\n/g, '<br>');
+                    const linkRegex = /\[(.?)\]\((.?)\)/g;
+                    content = content.replace(linkRegex, '<a href="$2" target="_blank" class="text-blue-600 font-bold underline hover:text-blue-800">$1 📅</a>');
+                    bubble.innerHTML = content;
+                }
+
+                messageDiv.appendChild(bubble);
+                chatContainer.appendChild(messageDiv); // Append to container
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            } catch (e) {
+                console.error("Error adding message:", e);
+            }
+        }
+        
+        function showLoader() {
+            addMessage('assistant', 'thinking...');
+        }
+        
+        function hideLoader() {
+            const loaders = document.querySelectorAll('.loader');
+            if (loaders.length > 0) {
+                loaders[loaders.length - 1].closest('.flex.mb-3').remove();
+            }
+        }
+        
+        function speakToUser(text, lang) {
+            if (isMuted) {
+                console.log("Speech synthesis is muted.");
+                return;
+            }
+            try {
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                }
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang;
+                window.speechSynthesis.speak(utterance);
+            } catch (e) {
+                console.error("Speech synthesis failed:", e);
+            }
+        }
+        
+        function resetChat() {
+            try {
+                chatContainer.innerHTML = '';
+                addMessage('assistant', WELCOME_MESSAGE);
+                chatHistory = [ { role: "system", content: SYSTEM_PROMPT } ];
+                window.speechSynthesis.cancel();
+                console.log("Chat has been reset.");
+            } catch(e) {
+                console.error("Error resetting chat:", e);
+            }
+        }
+        
+        async function handleUserMessage(promptToSend, messageToDisplay) {
+            if (!promptToSend) return;
+            
+            addMessage('user', messageToDisplay);
+            chatHistory.push({ role: "user", content: promptToSend });
+            showLoader();
+            
+            // This now calls your friend's backend
+            let aiText = await getAIResponse(chatHistory);
+            
+            hideLoader();
+            addMessage('assistant', aiText);
+            chatHistory.push({ role: "assistant", content: aiText });
+            
+            const textToSpeak = aiText.replace(/\[(.?)\]\((.?)\)/g, "$1");
+            speakToUser(textToSpeak, langSelect.value.split('-')[0]);
+        }
+
+        // --- 5. THE "BRAIN" - AI API CALL (MODIFIED) ---
+        async function getAIResponse(history) {
+            
+            // --- THIS IS THE ONLY LINE YOU MUST EDIT ---
+            // Paste your friend's backend API URL here:
+            const API_URL = "http://127.0.0.1:8000/docs"; 
+            // --- END OF EDIT ---
+            
+            
+            // This is the "order" we send to the "kitchen"
+            const payload = {
+                // We send the full chat history
+                messages: history.map(msg => ({ role: msg.role, content: msg.content }))
+                
+                // IMPORTANT: Ask your friend if this format is correct!
+                // They might just want the last message, for example.
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    // We REMOVED the 'Authorization' header. 
+                    // Your friend's backend handles the secret key.
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(API error! status: ${response.status});
+                }
+                const data = await response.json();
+                
+                // IMPORTANT: Ask your friend how to get the text from their response.
+                //
+                // By default, I'm assuming they send back the exact same response as Shivaay
+                return data.choices[0].message.content;
+                //
+                // But maybe they send it back differently, like:
+                // return data.ai_response_text;
+                // or
+                // return data.text;
+
+            } catch (e) {
+                console.error("Error calling AI backend:", e);
+                // This is our new error message
+                return "Sorry, there was a problem connecting to the server. Please check with your backend provider.";
+            }
+        }
+
+        // --- 6. CONNECT ALL BUTTONS TO FUNCTIONS ---
+        // This code does not need to change.
+        try {
+            if (sendBtn) {
+                sendBtn.addEventListener('click', () => {
+                    const userText = chatInput.value;
+                    chatInput.value = "";
+                    handleUserMessage(userText, userText);
+                });
+            } else { console.error("Send Button not found!"); }
+
+            if (chatInput) {
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendBtn.click();
+                    }
+                });
+            } else { console.error("Chat Input not found!"); }
+
+            if (reportBtn) {
+                reportBtn.addEventListener('click', () => {
+                    const reportPrompt = Please explain this medical report in simple terms: ${SAMPLE_REPORT};
+                    handleUserMessage(reportPrompt, "Can you explain my medical report?"); 
+                });
+            } else { console.error("Report Button not found!"); }
+            
+            if (symptomBtn) {
+                symptomBtn.addEventListener('click', () => {
+                    const symptomPrompt = "Assess My Symptoms";
+                    handleUserMessage(symptomPrompt, "I'm not feeling well, can you assess my symptoms?");
+                });
+            } else { console.error("Symptom Button not found!"); }
+
+            if (speakBtn) {
+                speakBtn.addEventListener('click', () => {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    if (!SpeechRecognition) {
+                        alert("Sorry, your browser doesn't support speech recognition. Please use Chrome or Safari.");
+                        return;
+                    }
+                    
+                    const recognition = new SpeechRecognition();
+                    recognition.lang = langSelect.value;
+                    
+                    recognition.onstart = () => {
+                        speakBtn.innerText = "Listening...";
+                        speakBtn.classList.add('animate-pulse');
+                    };
+                    
+                    recognition.onresult = (event) => {
+                        const spokenText = event.results[0][0].transcript;
+                        handleUserMessage(spokenText, spokenText);
+Access-Control-Allow-Origin
+                    };
+                    
+                    recognition.onend = () => {
+                        speakBtn.innerText = "Speak 🎤";
+                        speakBtn.classList.remove('animate-pulse');
+                    };
+                    
+                    recognition.onerror = (event) => {
+                        console.error("Speech recognition error:", event.error);
+                        speakBtn.innerText = "Speak 🎤";
+                        speakBtn.classList.remove('animate-pulse');
+                    };
+                    
+                    recognition.start();
+                });
+            } else { console.error("Speak Button not found!"); }
+            
+            if (fontIncreaseBtn) {
+                fontIncreaseBtn.addEventListener('click', () => {
+                    let currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+                    if (currentSize < 24) { // Set a max size
+                        document.documentElement.style.fontSize = (currentSize + 1) + 'px';
+                    }
+                });
+            } else { console.error("Font Increase Button not found!"); }
+            
+            if (fontDecreaseBtn) {
+                fontDecreaseBtn.addEventListener('click', () => {
+                    let currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+                    if (currentSize > 12) { // Set a min size
+                        document.documentElement.style.fontSize = (currentSize - 1) + 'px';
+                    }
+                });
+            } else { console.error("Font Decrease Button not found!"); }
+            
+            if (clearBtn) {
+                clearBtn.addEventListener('click', resetChat);
+            } else { console.error("Clear Button not found!"); }
+            
+            if (aboutBtn) {
+                aboutBtn.addEventListener('click', () => {
+                    if (aboutModal) aboutModal.classList.remove('hidden');
+                });
+            } else { console.error("About Button not found!"); }
+            
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', () => {
+                    if (aboutModal) aboutModal.classList.add('hidden');
+                });
+            } else { console.error("Close Modal Button not found!"); }
+            
+            if (aboutModal) {
+                aboutModal.addEventListener('click', (e) => {
+                    if (e.target === aboutModal) {
+                        aboutModal.classList.add('hidden');
+                    }
+                });
+            } else { console.error("About Modal not found!"); }
+            
+            if (muteBtn) {
+                muteBtn.addEventListener('click', () => {
+                    isMuted = !isMuted;
+                    if (isMuted) {
+                        muteIcon.innerHTML = speakerOffIcon;
+                        muteBtn.title = "Unmute";
+                        window.speechSynthesis.cancel();
+                    } else {
+                        muteIcon.innerHTML = speakerOnIcon;
+                        muteBtn.title = "Mute";
+                    }
+                });
+            } else { console.error("MNote Button not found!"); }
+
+        } catch (e) {
+            console.error("A critical error occurred while adding event listeners:", e);
+            alert("A fatal error occurred. Some buttons may not work. " + e.message);
+        }
+
+    </script>
+</body>
+</html>
