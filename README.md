@@ -1,41 +1,41 @@
-# 🩺 AYU – Voice-Enabled Medical Assistant (Frontend)
+# ⚙️ AYU – Medical Assistant Backend (FastAPI)
 
-**AYU** is an AI-powered web assistant that helps patients understand their **medical reports**, **book doctor appointments**, and **get instant health information** — through **voice or text**.
-
-### 🌐 Live Link
-👉 [AYU Health Assistant on Netlify](https://ayuhealthassistant.netlify.app)
+This backend powers **AYU**, a smart healthcare assistant that analyzes medical reports, retrieves health info, supports multilingual queries, and manages appointment booking.
 
 ---
 
 ## 🚀 Features
-- 🎙️ Voice-enabled chatbot interface  
-- 📄 Medical report analysis using OCR  
-- 📅 Appointment booking support  
-- 💬 Health information retrieval  
-- 🌍 Multilingual support (English & Hindi)
+- 🧾 PDF OCR (Tesseract + Poppler)
+- 💬 Medical report summarization using **HuggingFace Transformers**
+- 🌐 Wikipedia-based health information API
+- 📅 Appointment scheduling with SQLite
+- 🌎 Multilingual support via Google Translator
+- 🗣️ Voice to text using **SpeechRecognition**
 
 ---
 
 ## 🧠 Tech Stack
-- **HTML, CSS, JavaScript**
-- **PyScript** for backend logic in browser
-- **FastAPI (Backend Integration)**
-- **HuggingFace Transformers**, **Tesseract OCR**, **Wikipedia API**
+- **FastAPI**  
+- **Python 3.13**  
+- **SQLite**  
+- **HuggingFace Transformers**  
+- **Tesseract OCR**  
+- **Wikipedia API**  
+- **Googletrans**
 
 ---
 
-## 🛠️ How to Use
-1. Open the [AYU Health Assistant](https://ayuhealthassistant.netlify.app).
-2. Click the **microphone icon** or **type your query**.
-3. You can:
-   - Ask health-related questions  
-   - Upload medical reports  
-   - Book appointments by saying “Book appointment tomorrow at 5 PM”
+## ▶️ How to Run Locally
+```bash
+# 1. Clone repo
+git clone https://github.com/rupaashi/Ayu-Medical-Assist/blob/backend/
+cd AYU-Backend
 
----
+# 2. Activate virtual environment
+.\.venv\Scripts\activate
 
-## 👩‍💻 Team
-- **Rupashi Jain** – Backend & Architecture  
-- **Shravasti Sharma** – Frontend Developer  
-- **Shinjini Srivastava** – Integration & Deployment
+# 3. Install dependencies
+pip install -r requirements.txt
 
+# 4. Run FastAPI
+uvicorn app:app --reload
