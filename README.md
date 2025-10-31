@@ -28,7 +28,7 @@ This backend powers **AYU**, a smart healthcare assistant that analyzes medical 
 ## ▶️ How to Run Locally
 ```bash
 # 1. Clone repo
-git clone https://github.com/rupaashi/AYU-Backend.git](https://github.com/rupaashi/Ayu-Medical-Assist/blob/backend/
+git clone https://github.com/rupaashi/Ayu-Medical-Assist/blob/backend/
 cd AYU-Backend
 
 # 2. Activate virtual environment
