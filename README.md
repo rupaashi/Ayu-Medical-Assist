@@ -35,7 +35,7 @@
 ---
 
 ## 🧩 Backend Repository
-🔗 [AYU Backend (FastAPI)](https://github.com/YourName/AYU-Backend)
+🔗 [AYU Backend (FastAPI)](https://github.com/rupaashi/AYU-Backend)
 
 ---
 
