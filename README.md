@@ -34,11 +34,6 @@
 
 ---
 
-## 🧩 Backend Repository
-🔗 [AYU Backend (FastAPI)](https://github.com/rupaashi/AYU-Backend)
-
----
-
 ## 👩‍💻 Team
 - **Rupashi Jain** – Backend & Architecture  
 - **Shravasti Sharma** – Frontend Developer  
