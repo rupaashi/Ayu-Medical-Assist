@@ -41,6 +41,6 @@
 
 ## 👩‍💻 Team
 - **Rupashi Jain** – Backend & Architecture  
-- **Teammate 2** – Frontend Developer  
-- **Teammate 3** – Integration & Deployment
+- **Shravasti Sharma** – Frontend Developer  
+- **Shinjini Srivastava** – Integration & Deployment
 
